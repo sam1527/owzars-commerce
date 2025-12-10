@@ -25,7 +25,13 @@ export async function POST(request: Request) {
     .filter((id) => mongoose.Types.ObjectId.isValid(id));
 
   const products = await Product.find({ _id: { $in: productIds } }).lean();
-  const productMap = new Map(products.map((product) => [product._id.toString(), product]));
+  const productMap = new Map(
+  products.map((product: any) => [
+    product._id?.toString() ?? "",
+    product,
+  ])
+);
+
 
   const missingItem = items.find((item) => !productMap.has(item.productId));
   if (missingItem) {
