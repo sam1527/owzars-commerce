@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import Price from "./Price";
 import { IProduct } from "@/models/Product";
+import AddToCartButton from "@/components/cart/AddToCartButton";
 
 export type StorefrontProduct = IProduct & { _id: string };
 
@@ -32,13 +33,14 @@ export default function ProductCard({ product }: ProductCardProps) {
           <h3 className="text-lg font-semibold text-white line-clamp-2">{product.title}</h3>
           <Price amount={product.price} className="text-base font-medium text-slate-200" />
         </div>
-        <div className="mt-auto">
+        <div className="mt-auto flex flex-col gap-2">
           <Link
             href={`/products/${product._id}`}
-            className="inline-flex w-full items-center justify-center rounded-xl bg-white px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-slate-200"
+            className="inline-flex w-full items-center justify-center rounded-xl border border-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:border-white/30 hover:bg-white/10"
           >
             View product
           </Link>
+          <AddToCartButton productId={product._id} fullWidth />
         </div>
       </div>
     </article>
