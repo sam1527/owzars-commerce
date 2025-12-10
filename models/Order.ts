@@ -1,40 +1,52 @@
+// models/Order.ts
 import mongoose, { Schema, models } from "mongoose";
 
-export interface IOrderItem {
-  productId: string;
-  title: string;
-  quantity: number;
-  price: number;
-  image?: string | null;
-}
-
 export interface IOrder {
+  _id?: string;
   email?: string;
-  items: IOrderItem[];
+  items: {
+    productId: string;
+    title: string;
+    price: number;
+    quantity: number;
+    image?: string | null;
+  }[];
   total: number;
   currency: string;
   stripeSessionId: string;
   status?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
-
-const OrderItemSchema = new Schema<IOrderItem>({
-  productId: { type: String, required: true },
-  title: { type: String, required: true },
-  quantity: { type: Number, required: true, min: 1 },
-  price: { type: Number, required: true, min: 0 },
-  image: { type: String },
-});
 
 const OrderSchema = new Schema<IOrder>(
   {
-    email: { type: String },
-    items: { type: [OrderItemSchema], required: true },
-    total: { type: Number, required: true },
-    currency: { type: String, required: true },
-    stripeSessionId: { type: String, required: true, unique: true },
-    status: { type: String },
+    email: String,
+    items: [
+      {
+        productId: String,
+        title: String,
+        price: Number,
+        quantity: Number,
+        image: String,
+      },
+    ],
+    total: Number,
+    currency: String,
+    stripeSessionId: String,
+    status: String,
   },
   { timestamps: true }
 );
 
-export const Order = models.Order || mongoose.model<IOrder>("Order", OrderSchema);
+// Always return _id as string
+OrderSchema.set("toJSON", {
+  virtuals: true,
+  versionKey: false,
+  transform: (_, ret) => {
+    ret._id = ret._id.toString();
+  }
+});
+
+export const Order =
+  models.Order || mongoose.model<IOrder>("Order", OrderSchema);
