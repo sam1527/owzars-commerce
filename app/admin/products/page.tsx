@@ -34,17 +34,17 @@ export default async function AdminProductsPage() {
   }
 
   await connectToDatabase();
-  const products = (
-    await Product.find()
-      .sort({ createdAt: -1 })
-      .lean<{ _id: Types.ObjectId; title: string; category: string; price: number; createdAt: Date }>()
-  ).map((product) => ({
+  const docs = await Product.find()
+    .sort({ createdAt: -1 })
+    .lean<{ _id: Types.ObjectId; title: string; category: string; price: number; createdAt: Date }>();
+
+  const products: ProductListItem[] = docs.map((product) => ({
     _id: product._id.toString(),
     title: product.title,
     category: product.category,
     price: product.price,
     createdAt: product.createdAt.toISOString(),
-  } satisfies ProductListItem));
+  }));
 
   return (
     <section className="space-y-6">
