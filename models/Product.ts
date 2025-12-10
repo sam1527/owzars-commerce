@@ -1,14 +1,18 @@
+// models/Product.ts
 import mongoose, { Schema, models } from "mongoose";
 
 export interface IProduct {
+  _id?: string; // returned as string
   title: string;
   description: string;
   price: number;
   images: string[];
   category: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-const ProductSchema = new Schema<IProduct>(
+const ProductSchema = new Schema(
   {
     title: { type: String, required: true, trim: true },
     description: { type: String, required: true },
@@ -19,4 +23,14 @@ const ProductSchema = new Schema<IProduct>(
   { timestamps: true }
 );
 
-export const Product = models.Product || mongoose.model<IProduct>("Product", ProductSchema);
+// ALWAYS convert _id → string in responses
+ProductSchema.set("toJSON", {
+  virtuals: true,
+  versionKey: false,
+  transform: (_, ret) => {
+    ret._id = ret._id.toString();
+  }
+});
+
+export const Product =
+  models.Product || mongoose.model("Product", ProductSchema);
