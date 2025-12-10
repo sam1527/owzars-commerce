@@ -1,9 +1,10 @@
 import bcrypt from "bcrypt";
+import mongoose from "mongoose";
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 import { connectToDatabase } from "@/lib/mongodb";
-import { User } from "@/models/User";
+import { User, type IUser } from "@/models/User";
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -26,7 +27,9 @@ export const authOptions: NextAuthOptions = {
         }
 
         await connectToDatabase();
-        const user = await User.findOne({ email: credentials.email }).lean();
+        const user = await User.findOne({ email: credentials.email }).lean<
+          IUser & { _id: mongoose.Types.ObjectId }
+        >();
         if (!user) {
           return null;
         }

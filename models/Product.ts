@@ -2,7 +2,7 @@
 import mongoose, { Schema, models } from "mongoose";
 
 export interface IProduct {
-  _id?: string; // returned as string
+  _id?: string | mongoose.Types.ObjectId; // returned as string in API responses
   title: string;
   description: string;
   price: number;
@@ -27,7 +27,7 @@ const ProductSchema = new Schema(
 ProductSchema.set("toJSON", {
   virtuals: true,
   versionKey: false,
-  transform: (_, ret) => {
+  transform: (_, ret: any) => {
     ret._id = ret._id.toString();
   }
 });

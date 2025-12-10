@@ -44,7 +44,7 @@ export default async function EditProductPage({ params }: { params: { id: string
   }
 
   const plainProduct = {
-    _id: typeof product._id === "string" ? product._id : product._id.toString(),
+    _id: product._id.toString(),
     title: product.title,
     description: product.description,
     price: product.price,
