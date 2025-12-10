@@ -106,12 +106,11 @@ if (existing && !Array.isArray(existing)) {
     total: (existing as any).total ?? 0,
     currency: (existing as any).currency ?? "usd",
     stripeSessionId: (existing as any).stripeSessionId ?? "",
-    createdAt: (existing as any).createdAt ?? new Date(),
-    updatedAt: (existing as any).updatedAt ?? new Date(),
   };
 
   return safeOrder;
 }
+
 
 
 
