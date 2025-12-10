@@ -6,8 +6,13 @@ import ProductForm from "../_components/ProductForm";
 import { authOptions } from "@/lib/auth";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Product } from "@/models/Product";
+import type { IProduct } from "@/models/Product";
 
 const ADMIN_EMAIL = "owzarsllc@gmail.com";
+
+async function getProduct(id: string): Promise<(IProduct & { _id: mongoose.Types.ObjectId }) | null> {
+  return Product.findById(id).lean<IProduct & { _id: mongoose.Types.ObjectId }>();
+}
 
 function Unauthorized() {
   return (
@@ -32,14 +37,14 @@ export default async function EditProductPage({ params }: { params: { id: string
   }
 
   await connectToDatabase();
-  const product = await Product.findById(params.id).lean();
+  const product = await getProduct(params.id);
 
   if (!product) {
     notFound();
   }
 
   const plainProduct = {
-    _id: product._id.toString(),
+    _id: typeof product._id === "string" ? product._id : product._id.toString(),
     title: product.title,
     description: product.description,
     price: product.price,
