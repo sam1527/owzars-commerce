@@ -4,15 +4,22 @@ import { connectToDatabase } from "@/lib/mongodb";
 import { IProduct, Product } from "@/models/Product";
 import ProductCard, { StorefrontProduct } from "@/components/storefront/ProductCard";
 
-async function getProducts(): Promise<StorefrontProduct[]> {
-  await connectToDatabase();
-  const products = await Product.find().sort({ createdAt: -1 });
+export const dynamic = "force-dynamic";
 
-  return products.map((product) => ({
-    ...(product.toObject() as IProduct),
-    _id: product._id.toString(),
-    price: Number(product.price),
-  }));
+async function getProducts(): Promise<StorefrontProduct[]> {
+  try {
+    await connectToDatabase();
+    const products = await Product.find().sort({ createdAt: -1 });
+
+    return products.map((product) => ({
+      ...(product.toObject() as IProduct),
+      _id: product._id.toString(),
+      price: Number(product.price),
+    }));
+  } catch (error) {
+    console.error("Failed to load products:", error);
+    return [];
+  }
 }
 
 export default async function ProductsPage() {
