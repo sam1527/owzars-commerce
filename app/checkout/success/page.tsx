@@ -99,14 +99,20 @@ async function ensureOrder(sessionId: string) {
 
 const existing = await Order.findOne({ stripeSessionId: sessionId }).lean();
 
-if (existing) {
-  const safeOrder = {
-    ...existing,
+if (existing && !Array.isArray(existing)) {
+  const safeOrder: IOrder & { _id: string } = {
     _id: existing._id?.toString() ?? "",
-  } as IOrder & { _id: string };
+    items: (existing as any).items ?? [],
+    total: (existing as any).total ?? 0,
+    currency: (existing as any).currency ?? "usd",
+    stripeSessionId: (existing as any).stripeSessionId ?? "",
+    createdAt: (existing as any).createdAt ?? new Date(),
+    updatedAt: (existing as any).updatedAt ?? new Date(),
+  };
 
   return safeOrder;
 }
+
 
 
   const session = await stripe.checkout.sessions.retrieve(sessionId, {
