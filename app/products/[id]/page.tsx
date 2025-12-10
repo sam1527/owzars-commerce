@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import ImageGallery from "@/components/storefront/ImageGallery";
 import Price from "@/components/storefront/Price";
+import AddToCartButton from "@/components/cart/AddToCartButton";
 import { connectToDatabase } from "@/lib/mongodb";
 import { IProduct, Product } from "@/models/Product";
 
@@ -57,9 +58,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <Price amount={product.price} className="text-xl font-medium text-slate-200" />
             </div>
             <p className="leading-relaxed text-slate-300">{product.description}</p>
-            <button className="w-full rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-200">
-              Add to Cart
-            </button>
+            <AddToCartButton productId={product._id} fullWidth />
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
