@@ -1,10 +1,13 @@
 import Link from "next/link";
+import mongoose from "mongoose";
 import Price from "@/components/storefront/Price";
 import ClearCartClient from "@/components/storefront/ClearCartClient";
 import { connectToDatabase } from "@/lib/mongodb";
 import { stripe } from "@/lib/stripe";
 import { Order, IOrder } from "@/models/Order";
 import { Product, IProduct } from "@/models/Product";
+
+type CartItem = { productId: string; quantity: number };
 
 interface CheckoutSuccessPageProps {
   searchParams: { session_id?: string };
@@ -53,7 +56,9 @@ async function ensureOrder(sessionId: string): Promise<(IOrder & { _id: string }
   if (!session || session.payment_status !== "paid") return null;
 
   const cartItems = getCartItems(session);
-  const products = await Product.find({ _id: { $in: cartItems.map((i) => i.productId) } }).lean();
+  const products = (await Product.find<IProduct & { _id: mongoose.Types.ObjectId }>({
+    _id: { $in: cartItems.map((item) => item.productId) },
+  }).lean()) as unknown as Array<IProduct & { _id: mongoose.Types.ObjectId | string }>;
 
   const orderItems = cartItems.map((item) => {
     const product = products.find((prod) => prod._id.toString() === item.productId);
@@ -94,7 +99,7 @@ function sanitizeOrder(order: any): IOrder & { _id: string } {
   };
 }
 
-function getCartItems(session: any) {
+function getCartItems(session: any): CartItem[] {
   try {
     return JSON.parse(session.metadata?.cart || "[]");
   } catch {
