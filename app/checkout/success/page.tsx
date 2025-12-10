@@ -97,10 +97,17 @@ export default async function CheckoutSuccessPage({ searchParams }: CheckoutSucc
 async function ensureOrder(sessionId: string) {
   await connectToDatabase();
 
-  const existing = await Order.findOne({ stripeSessionId: sessionId }).lean();
-  if (existing) {
-    return existing as IOrder & { _id: string };
-  }
+const existing = await Order.findOne({ stripeSessionId: sessionId }).lean();
+
+if (existing) {
+  const safeOrder = {
+    ...existing,
+    _id: existing._id?.toString() ?? "",
+  } as IOrder & { _id: string };
+
+  return safeOrder;
+}
+
 
   const session = await stripe.checkout.sessions.retrieve(sessionId, {
     expand: ["line_items"],
