@@ -2,8 +2,7 @@ import { getServerSession } from "next-auth";
 import Link from "next/link";
 import ProductForm from "../_components/ProductForm";
 import { authOptions } from "@/lib/auth";
-
-const ADMIN_EMAIL = "owzarsllc@gmail.com";
+import { ADMIN_EMAIL } from "@/lib/constants";
 
 function Unauthorized() {
   return (

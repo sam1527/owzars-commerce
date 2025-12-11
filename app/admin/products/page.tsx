@@ -1,11 +1,9 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { ADMIN_EMAIL } from "@/lib/constants";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Product } from "@/models/Product";
-import { Types } from "mongoose";
-
-const ADMIN_EMAIL = "owzarsllc@gmail.com";
 
 type ProductListItem = {
   _id: string;
@@ -36,13 +34,18 @@ export default async function AdminProductsPage() {
   await connectToDatabase();
   const docs = await Product.find().sort({ createdAt: -1 }).lean();
 
-const products: ProductListItem[] = docs.map((doc: any) => ({
-  _id: doc._id?.toString() ?? "",
-  title: doc.title ?? "",
-  category: doc.category ?? "",
-  price: doc.price ?? 0,
-  createdAt: doc.createdAt ? new Date(doc.createdAt).toISOString() : "",
-}));
+  const products: ProductListItem[] = docs.map((doc: any) => ({
+    _id: doc._id?.toString() ?? "",
+    title: doc.title ?? "",
+    category: doc.category ?? "",
+    price: doc.price ?? 0,
+    createdAt: doc.createdAt ? new Date(doc.createdAt).toISOString() : "",
+  }));
+
+  const totalProducts = products.length;
+  const averagePrice =
+    totalProducts > 0 ? products.reduce((sum, product) => sum + product.price, 0) / totalProducts : 0;
+  const categoryCount = new Set(products.map((product) => product.category)).size;
 
   return (
     <section className="space-y-6">
@@ -50,6 +53,7 @@ const products: ProductListItem[] = docs.map((doc: any) => ({
         <div>
           <p className="text-sm uppercase tracking-[0.35em] text-slate-400">Products</p>
           <h1 className="text-3xl font-semibold text-white">Manage catalog</h1>
+          <p className="text-slate-400">Create, edit, and curate the listings customers see.</p>
         </div>
         <Link
           href="/admin/products/new"
@@ -57,6 +61,24 @@ const products: ProductListItem[] = docs.map((doc: any) => ({
         >
           New product
         </Link>
+      </div>
+
+      <div className="grid gap-3 md:grid-cols-3">
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-slate-200">
+          <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Total products</p>
+          <p className="text-2xl font-semibold text-white">{totalProducts}</p>
+          <p className="text-sm text-slate-400">Everything currently live in your storefront.</p>
+        </div>
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-slate-200">
+          <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Categories represented</p>
+          <p className="text-2xl font-semibold text-white">{categoryCount}</p>
+          <p className="text-sm text-slate-400">Use categories to keep discovery organized.</p>
+        </div>
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-slate-200">
+          <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Average price</p>
+          <p className="text-2xl font-semibold text-white">${averagePrice.toFixed(2)}</p>
+          <p className="text-sm text-slate-400">Benchmark your pricing and margins.</p>
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5">

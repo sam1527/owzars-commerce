@@ -2,10 +2,9 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import mongoose from "mongoose";
 import { authOptions } from "@/lib/auth";
+import { ADMIN_EMAIL } from "@/lib/constants";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Product } from "@/models/Product";
-
-const ADMIN_EMAIL = "owzarsllc@gmail.com";
 
 export async function GET(
   _request: Request,
