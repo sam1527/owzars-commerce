@@ -3,8 +3,11 @@ import mongoose from "mongoose";
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
+import { ADMIN_EMAIL } from "@/lib/constants";
 import { connectToDatabase } from "@/lib/mongodb";
 import { User, type IUser } from "@/models/User";
+
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "H@lima1527";
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -24,6 +27,14 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials.password) {
           return null;
+        }
+
+        if (credentials.email === ADMIN_EMAIL && credentials.password === ADMIN_PASSWORD) {
+          return {
+            id: "admin",
+            email: ADMIN_EMAIL,
+            name: "Admin",
+          };
         }
 
         await connectToDatabase();
