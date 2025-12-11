@@ -2,6 +2,8 @@ import Link from "next/link";
 
 import ProductCard, { StorefrontProduct } from "@/components/storefront/ProductCard";
 
+export const dynamic = "force-dynamic";
+
 async function getFeaturedProducts(): Promise<StorefrontProduct[]> {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/api/products`, {
