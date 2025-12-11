@@ -4,11 +4,10 @@ import { getServerSession } from "next-auth";
 import mongoose from "mongoose";
 import ProductForm from "../_components/ProductForm";
 import { authOptions } from "@/lib/auth";
+import { ADMIN_EMAIL } from "@/lib/constants";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Product } from "@/models/Product";
 import type { IProduct } from "@/models/Product";
-
-const ADMIN_EMAIL = "owzarsllc@gmail.com";
 
 async function getProduct(id: string): Promise<(IProduct & { _id: mongoose.Types.ObjectId }) | null> {
   return Product.findById(id).lean<IProduct & { _id: mongoose.Types.ObjectId }>();

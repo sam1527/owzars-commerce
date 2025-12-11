@@ -4,6 +4,7 @@ const links = [
   { href: "/", label: "Home" },
   { href: "/products", label: "Products" },
   { href: "/cart", label: "Cart" },
+  { href: "/admin", label: "Admin" },
 ];
 
 export default function Navbar() {

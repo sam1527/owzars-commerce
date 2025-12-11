@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const ADMIN_EMAIL = "owzarsllc@gmail.com";
+import { ADMIN_EMAIL } from "@/lib/constants";
 
 type ProductFormProps = {
   mode: "create" | "edit";
