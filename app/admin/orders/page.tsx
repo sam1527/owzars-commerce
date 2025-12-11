@@ -4,6 +4,8 @@ import OrderStatusControl from "./_components/OrderStatusControl";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Order } from "@/models/Order";
 
+export const dynamic = "force-dynamic";
+
 function formatCurrency(amount: number, currency = "USD") {
   return new Intl.NumberFormat("en-US", { style: "currency", currency }).format(amount);
 }
