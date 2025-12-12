@@ -13,7 +13,7 @@ export async function GET() {
   }
 
   await connectToDatabase();
-  const user = await User.findOne({ email: session.user.email.toLowerCase() }).lean();
+  const user = await User.findOne({ email: session.user.email.toLowerCase() });
 
   return NextResponse.json({
     user: user
