@@ -23,6 +23,7 @@ async function getProduct(id: string) {
     ...(product.toObject() as IProduct),
     _id: product._id.toString(),
     price: Number(product.price),
+    inventory: Number(product.inventory ?? 0),
   };
 }
 
@@ -59,8 +60,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 <p className="text-sm uppercase tracking-[0.3em] text-slate-400">Pricing</p>
                 <Price amount={product.price} className="text-3xl font-semibold text-white" />
               </div>
-              <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-200">
-                In stock
+              <span
+                className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${
+                  product.inventory > 0
+                    ? "bg-emerald-500/10 text-emerald-200"
+                    : "bg-red-500/10 text-red-200"
+                }`}
+              >
+                {product.inventory > 0 ? `${product.inventory} in stock` : "Sold out"}
               </span>
             </div>
             <p className="mt-4 leading-relaxed text-slate-200">
@@ -73,7 +80,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <InfoPill label="Support" value="Owzars assistance" />
             </div>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <AddToCartButton productId={product._id} fullWidth />
+              <AddToCartButton productId={product._id} fullWidth available={product.inventory} />
               <Link
                 href="/cart"
                 className="inline-flex items-center justify-center rounded-xl border border-white/20 px-4 py-3 text-sm font-semibold text-white transition hover:border-white/40 hover:bg-white/10 sm:w-1/3"

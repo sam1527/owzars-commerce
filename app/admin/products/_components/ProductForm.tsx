@@ -14,6 +14,7 @@ type ProductFormProps = {
     price: number;
     images: string[];
     category: string;
+    inventory: number;
   };
 };
 
@@ -24,6 +25,7 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
   const [price, setPrice] = useState(product?.price?.toString() ?? "");
   const [images, setImages] = useState((product?.images ?? []).join(", "));
   const [category, setCategory] = useState(product?.category ?? "");
+  const [inventory, setInventory] = useState(product?.inventory?.toString() ?? "0");
   const [status, setStatus] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -41,6 +43,7 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
         .map((img) => img.trim())
         .filter(Boolean),
       category,
+      inventory: Number.parseInt(inventory, 10),
     };
 
     const endpoint = mode === "create" ? "/api/products" : `/api/products/${product?._id}`;
@@ -146,6 +149,20 @@ export default function ProductForm({ mode, product }: ProductFormProps) {
             onChange={(e) => setPrice(e.target.value)}
             className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white outline-none focus:border-white/30"
             placeholder="0.00"
+          />
+        </label>
+
+        <label className="space-y-2 text-sm text-slate-300">
+          <span className="block text-xs uppercase tracking-[0.2em] text-slate-400">Inventory</span>
+          <input
+            required
+            type="number"
+            min={0}
+            step="1"
+            value={inventory}
+            onChange={(e) => setInventory(e.target.value)}
+            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white outline-none focus:border-white/30"
+            placeholder="0"
           />
         </label>
 

@@ -34,9 +34,17 @@ export async function PUT(
   }
 
   const body = await request.json();
-  const { title, description, price, images = [], category } = body;
+  const { title, description, price, images = [], category, inventory } = body;
 
-  if (!title || !description || typeof price !== "number" || Number.isNaN(price) || !category) {
+  if (
+    !title ||
+    !description ||
+    typeof price !== "number" ||
+    Number.isNaN(price) ||
+    !category ||
+    typeof inventory !== "number" ||
+    inventory < 0
+  ) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
@@ -48,7 +56,7 @@ export async function PUT(
 
   const product = await Product.findByIdAndUpdate(
     params.id,
-    { title, description, price, images, category },
+    { title, description, price, images, category, inventory },
     { new: true }
   );
 
