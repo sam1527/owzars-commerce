@@ -29,16 +29,21 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        if (credentials.email === ADMIN_EMAIL && credentials.password === ADMIN_PASSWORD) {
+        const normalizedEmail = credentials.email.toLowerCase();
+
+        if (
+          normalizedEmail === ADMIN_EMAIL.toLowerCase() &&
+          credentials.password === ADMIN_PASSWORD
+        ) {
           return {
             id: "admin",
-            email: ADMIN_EMAIL,
+            email: ADMIN_EMAIL.toLowerCase(),
             name: "Admin",
           };
         }
 
         await connectToDatabase();
-        const user = await User.findOne({ email: credentials.email }).lean<
+        const user = await User.findOne({ email: normalizedEmail }).lean<
           IUser & { _id: mongoose.Types.ObjectId }
         >();
         if (!user) {
