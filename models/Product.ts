@@ -8,6 +8,7 @@ export interface IProduct {
   price: number;
   images: string[];
   category: string;
+  inventory: number;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -19,6 +20,7 @@ const ProductSchema = new Schema(
     price: { type: Number, required: true, min: 0 },
     images: { type: [String], default: [] },
     category: { type: String, required: true, trim: true },
+    inventory: { type: Number, required: true, min: 0, default: 0 },
   },
   { timestamps: true }
 );

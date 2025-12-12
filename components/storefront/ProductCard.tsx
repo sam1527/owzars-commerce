@@ -13,6 +13,8 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const coverImage = product.images?.[0];
+  const isOutOfStock = (product.inventory ?? 0) <= 0;
+  const lowStock = !isOutOfStock && (product.inventory ?? 0) <= 5;
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900 to-slate-950 shadow-lg transition hover:-translate-y-1 hover:border-white/30 hover:shadow-2xl">
@@ -39,6 +41,15 @@ export default function ProductCard({ product }: ProductCardProps) {
           <h3 className="text-lg font-semibold text-white line-clamp-2">{product.title}</h3>
           <p className="text-sm text-slate-300 line-clamp-2">{product.description}</p>
           <Price amount={product.price} className="text-base font-semibold text-white" />
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">
+            {isOutOfStock ? (
+              <span className="text-red-200">Sold out</span>
+            ) : (
+              <span className="text-emerald-200">
+                {product.inventory} in stock{lowStock ? " · order soon" : ""}
+              </span>
+            )}
+          </p>
         </div>
         <div className="mt-auto flex flex-col gap-2">
           <Link
@@ -47,7 +58,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           >
             View product
           </Link>
-          <AddToCartButton productId={product._id} fullWidth />
+          <AddToCartButton productId={product._id} fullWidth available={product.inventory} />
         </div>
       </div>
     </article>

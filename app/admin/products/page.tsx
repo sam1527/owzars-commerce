@@ -10,6 +10,7 @@ type ProductListItem = {
   title: string;
   category: string;
   price: number;
+  inventory: number;
   createdAt: string;
 };
 
@@ -39,6 +40,7 @@ export default async function AdminProductsPage() {
     title: doc.title ?? "",
     category: doc.category ?? "",
     price: doc.price ?? 0,
+    inventory: doc.inventory ?? 0,
     createdAt: doc.createdAt ? new Date(doc.createdAt).toISOString() : "",
   }));
 
@@ -46,6 +48,7 @@ export default async function AdminProductsPage() {
   const averagePrice =
     totalProducts > 0 ? products.reduce((sum, product) => sum + product.price, 0) / totalProducts : 0;
   const categoryCount = new Set(products.map((product) => product.category)).size;
+  const lowStock = products.filter((product) => product.inventory <= 5).length;
 
   return (
     <section className="space-y-6">
@@ -79,6 +82,12 @@ export default async function AdminProductsPage() {
           <p className="text-2xl font-semibold text-white">${averagePrice.toFixed(2)}</p>
           <p className="text-sm text-slate-400">Benchmark your pricing and margins.</p>
         </div>
+
+        <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-slate-200">
+          <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Low-stock SKUs</p>
+          <p className="text-2xl font-semibold text-white">{lowStock}</p>
+          <p className="text-sm text-slate-400">Items at or below 5 units in inventory.</p>
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
@@ -88,6 +97,7 @@ export default async function AdminProductsPage() {
               <th className="px-4 py-3">Title</th>
               <th className="px-4 py-3">Category</th>
               <th className="px-4 py-3">Price</th>
+              <th className="px-4 py-3">Inventory</th>
               <th className="px-4 py-3">Created</th>
               <th className="px-4 py-3 text-right">Actions</th>
             </tr>
@@ -98,6 +108,7 @@ export default async function AdminProductsPage() {
                 <td className="px-4 py-3 font-medium text-white">{product.title}</td>
                 <td className="px-4 py-3 text-slate-300">{product.category}</td>
                 <td className="px-4 py-3 text-slate-300">${product.price.toFixed(2)}</td>
+                <td className="px-4 py-3 text-slate-300">{product.inventory}</td>
                 <td className="px-4 py-3 text-slate-400">
                   {new Date(product.createdAt).toLocaleDateString()}
                 </td>

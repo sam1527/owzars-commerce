@@ -49,6 +49,7 @@ export default async function EditProductPage({ params }: { params: { id: string
     price: product.price,
     images: product.images || [],
     category: product.category,
+    inventory: product.inventory,
   };
 
   return (

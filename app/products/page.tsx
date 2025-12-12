@@ -15,6 +15,7 @@ async function getProducts(): Promise<StorefrontProduct[]> {
       ...(product.toObject() as IProduct),
       _id: product._id.toString(),
       price: Number(product.price),
+      inventory: Number(product.inventory ?? 0),
     }));
   } catch (error) {
     console.error("Failed to load products:", error);
